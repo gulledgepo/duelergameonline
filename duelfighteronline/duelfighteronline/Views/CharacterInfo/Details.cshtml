@@ -1,0 +1,106 @@
+﻿@model duelfighteronline.Models.CharacterInfo
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>CharacterInfo</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.CharacterName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CharacterName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CharacterClass)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CharacterClass)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Level)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Level)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.StatPointsAvailable)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.StatPointsAvailable)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CurrentExperience)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CurrentExperience)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.MaxExperienceForLevel)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.MaxExperienceForLevel)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Health)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Health)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Strength)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Strength)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Dexterity)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Dexterity)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Vitality)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Vitality)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Luck)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Luck)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.ID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
