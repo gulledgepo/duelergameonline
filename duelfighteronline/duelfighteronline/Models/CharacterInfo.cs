@@ -12,6 +12,7 @@ namespace duelfighteronline.Models
         [Key]
         public int ID { get; set; }
 
+        public string PlayerID { get; set; }
         [Required()]
         [Display(Name="Character Name")]
         public string CharacterName { get; set; }
@@ -19,7 +20,6 @@ namespace duelfighteronline.Models
         public CharacterClass CharacterClass { get; set; }
         public int Level { get; set; }
         [Display(Name = "Available Stat Points")]
-        [Range(0, 0, ErrorMessage = "All attribute points must be distributed before a character can be created.")]
         public int StatPointsAvailable { get; set; }
         [Display(Name = "Experience")]
         public int CurrentExperience { get; set; }
@@ -34,7 +34,27 @@ namespace duelfighteronline.Models
         public int Vitality { get; set; }
         [Range(1, 1000)]
         public int Luck { get; set; }
+        public int DuelsAvailable { get; set; }
+        public int DuelWins { get; set; }
+        public int DuelLosses { get; set; }
+
+        public int CalculateHealth(CharacterInfo characterInfo)
+        {
+            if (characterInfo.CharacterClass.ToString() == "Jester")
+            {
+                float health = (float)characterInfo.Health;
+                characterInfo.Health = (int)(50 + (characterInfo.Health * 5) * 1.2);
+            } else
+            {
+                characterInfo.Health = (int)(50 + (characterInfo.Health * 5));
+            }
+            return characterInfo.Health;
+        }
+
     }
+
+    
+
 
     public enum CharacterClass { Knight, Assassin, Warrior, Jester }
 }

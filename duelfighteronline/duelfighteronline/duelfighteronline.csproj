@@ -199,23 +199,26 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Context\CharacterClassContext.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\CharacterCreateController.cs" />
     <Compile Include="Controllers\CharacterInfoController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201811072116211_Init.cs" />
-    <Compile Include="Migrations\201811072116211_Init.Designer.cs">
-      <DependentUpon>201811072116211_Init.cs</DependentUpon>
+    <Compile Include="Migrations\201811100234170_Init.cs" />
+    <Compile Include="Migrations\201811100234170_Init.Designer.cs">
+      <DependentUpon>201811100234170_Init.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201811072212467_Init2.cs" />
-    <Compile Include="Migrations\201811072212467_Init2.Designer.cs">
-      <DependentUpon>201811072212467_Init2.cs</DependentUpon>
+    <Compile Include="Migrations\201811121808528_Init2.cs" />
+    <Compile Include="Migrations\201811121808528_Init2.Designer.cs">
+      <DependentUpon>201811121808528_Init2.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\CharacterInfo.cs" />
+    <Compile Include="Models\CharacterInfoDTO.cs" />
+    <Compile Include="Models\CharacterInfoViewModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -236,7 +239,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
-    <Content Include="Scripts\detectStatChange.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
     <Content Include="Scripts\jquery-3.3.1.slim.js" />
@@ -286,9 +288,11 @@
     <Content Include="Views\CharacterInfo\Details.cshtml" />
     <Content Include="Views\CharacterInfo\Edit.cshtml" />
     <Content Include="Views\CharacterInfo\Index.cshtml" />
+    <Content Include="Views\CharacterInfo\Index - Copy.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\CharacterCreate\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
@@ -304,11 +308,11 @@
     <Content Include="Scripts\jquery-3.3.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201811072116211_Init.resx">
-      <DependentUpon>201811072116211_Init.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201811100234170_Init.resx">
+      <DependentUpon>201811100234170_Init.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201811072212467_Init2.resx">
-      <DependentUpon>201811072212467_Init2.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201811121808528_Init2.resx">
+      <DependentUpon>201811121808528_Init2.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

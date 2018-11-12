@@ -1,0 +1,96 @@
+﻿@model IEnumerable<duelfighteronline.Models.CharacterInfo>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.CharacterName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CharacterClass)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Level)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.StatPointsAvailable)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CurrentExperience)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.MaxExperienceForLevel)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Health)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Strength)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Dexterity)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Vitality)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Luck)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.CharacterName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CharacterClass)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Level)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StatPointsAvailable)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CurrentExperience)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaxExperienceForLevel)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Health)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Strength)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Dexterity)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Vitality)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Luck)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
+                @Html.ActionLink("Details", "Details", new { id = item.ID }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+            </td>
+        </tr>
+    }
+
+</table>
+
+<p><p>@ViewBag.userid</p></p>
