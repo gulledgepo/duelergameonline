@@ -1,0 +1,182 @@
+﻿@model duelfighteronline.Models.CharacterInfo
+
+@{
+// ViewBag.Title = "Create";
+
+}
+
+<h2>Create your character:</h2>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <script type="text/javascript">
+        var currentStats = [0, 0, 0, 0];
+        currentStats[0] = currentStats[0] + parseInt(document.getElementById("statStrength").value);
+        currentStats[1] = currentStats[1] + parseInt(document.getElementById("statDexterity").value);
+        currentStats[2] = currentStats[2] + parseInt(document.getElementById("statVitality").value);
+        currentStats[3] = currentStats[3] + parseInt(document.getElementById("statLuck").value);
+
+        function FindStat(modifiedStat) {
+            switch (String(modifiedStat)) {
+                case "statStrength":
+                    statToTest = 0;
+                    break;
+                case "statDexterity":
+                    statToTest = 1;
+                    break;
+                case "statVitality":
+                    statToTest = 2;
+                    break;
+                case "statLuck":
+                    statToTest = 3;
+                    break;
+            }
+            return statToTest;
+        }
+
+        function OnPlusStatClick(modifiedStat) {
+            statToTest = FindStat(modifiedStat);
+            testStat = 0;
+            testStat = testStat + parseInt(document.getElementById(modifiedStat).value);
+            //Checks to see if there are stat points available, if there are, it subtracts one from available and adds one to the stat being modified, found in FindStat();
+            if (document.getElementById("availableStats").value > 0) {
+                currentStats[statToTest] = testStat + 1;
+                document.getElementById("availableStats").value = parseInt((document.getElementById("availableStats").value - 1));
+                document.getElementById(modifiedStat).value = parseInt(currentStats[statToTest]);
+            }
+            if (document.getElementById("availableStats").value == 0) {
+                document.getElementById("submitButton").style="display:initial;";
+            }
+
+        }
+
+        function OnMinusStatClick(modifiedStat) {
+            statToTest = FindStat(modifiedStat);
+            testStat = 0;
+            testStat = testStat + parseInt(document.getElementById(modifiedStat).value);
+            //Checks to see if the stat refunding a point is greater than the min, 1, and refunds it to availableStats and subtracts 1 from the stat found in FindStat();
+            //String Concatenation was happening no matter what I did, so I had to set values to a variable to parse for it to work correctly.
+            if (testStat > 1) {
+                var temp = 0;
+                temp = temp + parseInt(document.getElementById("availableStats").value);
+                currentStats[statToTest] = testStat - 1;
+                document.getElementById("availableStats").value = parseInt(temp + 1);
+                document.getElementById(modifiedStat).value = parseInt(currentStats[statToTest]);
+            }
+            if (document.getElementById("availableStats").value > 0) {
+                document.getElementById("submitButton").style="display: none;";
+            }
+        }
+
+    </script>
+    <p class ="text-danger">
+        @TempData["message"]
+    </p>
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.CharacterName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.CharacterName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.CharacterName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.CharacterClass, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EnumDropDownListFor(model => model.CharacterClass, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.CharacterClass, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Level, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.Level, new { @class = "form-control", @readonly = "readonly", @style = "text-align:right" })
+                @Html.ValidationMessageFor(model => model.Level, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.StatPointsAvailable, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.StatPointsAvailable, new { @class = "form-control", @readonly = "readonly", @style = "text-align:right", id = "availableStats" })
+                @Html.ValidationMessageFor(model => model.StatPointsAvailable, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Strength, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.Strength, new { @class = "form-control", @readonly = "readonly", @style = "text-align:right; display: inline;", id = "statStrength" })
+                @Html.ValidationMessageFor(model => model.Strength, "", new { @class = "text-danger" })
+                <input type="button" value="+" class="btn btn-default" onclick="OnPlusStatClick('statStrength')" style="display: inline;" />
+                <input type="button" value="-" class="btn btn-default" onclick="OnMinusStatClick('statStrength')" style="display: inline;" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Dexterity, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.Dexterity, new { @class = "form-control", @readonly = "readonly", @style = "text-align:right; display: inline;", id = "statDexterity" })
+                @Html.ValidationMessageFor(model => model.Dexterity, "", new { @class = "text-danger" })
+                <input type="button" value="+" class="btn btn-default" onclick="OnPlusStatClick('statDexterity')" style="display: inline;" />
+                <input type="button" value="-" class="btn btn-default" onclick="OnMinusStatClick('statDexterity')" style="display: inline;" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Vitality, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.Vitality, new { @class = "form-control", @readonly = "readonly", @style = "text-align:right; display: inline;", id = "statVitality" })
+                @Html.ValidationMessageFor(model => model.Vitality, "", new { @class = "text-danger" })
+                <input type="button" value="+" class="btn btn-default" onclick="OnPlusStatClick('statVitality')" style="display: inline;" />
+                <input type="button" value="-" class="btn btn-default" onclick="OnMinusStatClick('statVitality')" style="display: inline;" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Luck, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.Luck, new { @class = "form-control", @readonly = "readonly", @style = "text-align:right; display: inline;", id = "statLuck" })
+                @Html.ValidationMessageFor(model => model.Luck, "", new { @class = "text-danger" })
+                <input type="button" value="+" class="btn btn-default" onclick="OnPlusStatClick('statLuck')" style="display: inline;" />
+                <input type="button" value="-" class="btn btn-default" onclick="OnMinusStatClick('statLuck')" style="display: inline;" />
+            </div>
+        </div>
+
+        
+        <div class="form-group">
+            <!-- These stats are invisible to keep them not displayed upon creation. This is the only time they are not displayed, so not DTO is used.-->
+            @Html.HiddenFor(model => model.Level)
+            @Html.HiddenFor(model => model.Health)
+            @Html.HiddenFor(model => model.MaxExperienceForLevel)
+            @Html.HiddenFor(model => model.PlayerID)
+
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" id="submitButton" style="display:none;" />
+            </div>
+        </div>
+    </div>
+    <p>@ViewBag.username</p>
+}
+
+
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+   
+}
+

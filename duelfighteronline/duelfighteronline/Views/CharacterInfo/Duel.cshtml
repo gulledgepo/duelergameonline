@@ -1,0 +1,121 @@
+﻿@model duelfighteronline.Models.DuelViewModel
+
+@{
+    ViewBag.Title = "Duel";
+}
+
+<h2>Duel</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <script type="text/javascript">
+
+        function OnChangeDuelRequest() {
+            alert("Test");
+            //duelRequest = ParseInt(document.getElementById("DuelRequest").value);
+            //duelsAvailable = ParseInt(document.getElementById("DuelsAvailable").value);
+            //if (duelsAvailable <= duelRequest)
+            //{
+            //    document.getElementById("submitButton").style = "display:initial;";
+            //} else
+            //{
+            //    document.getElementById("submitButton").style = "display: none;";
+            //}
+        }
+    </script>
+
+    <div class="form-horizontal">
+        <h4 style="text-align: justify;">
+            @Html.DisplayFor(model => model.CharacterInfo.CharacterName) the @Html.DisplayFor(model => model.CharacterInfo.CharacterClass)
+        </h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.CharacterInfo.ID)
+        @Html.HiddenFor(model => model.CharacterInfo.CharacterName)
+        @Html.HiddenFor(model => model.CharacterInfo.Level)
+        @Html.HiddenFor(model => model.CharacterInfo.PlayerID)
+        @Html.HiddenFor(model => model.CharacterInfo.CurrentExperience)
+        @Html.HiddenFor(model => model.CharacterInfo.MaxExperienceForLevel)
+        @Html.HiddenFor(model => model.CharacterInfo.Strength)
+        @Html.HiddenFor(model => model.CharacterInfo.Dexterity)
+        @Html.HiddenFor(model => model.CharacterInfo.Vitality)
+        @Html.HiddenFor(model => model.CharacterInfo.Luck)
+        @Html.HiddenFor(model => model.CharacterInfo.StatPointsAvailable)
+        @Html.HiddenFor(model => model.CharacterInfo.Damage)
+        @Html.HiddenFor(model => model.CharacterInfo.Health)
+        @Html.HiddenFor(model => model.CharacterInfo.CritChance)
+        @Html.HiddenFor(model => model.CharacterInfo.DodgeChance)
+        @Html.HiddenFor(model => model.CharacterInfo.DuelHistory)
+        <hr />
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.CharacterInfo.DuelWins, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.CharacterInfo.DuelWins, new { @class = "form-control", @readonly = "readonly", @style = "text-align:right" })
+                @Html.ValidationMessageFor(model => model.CharacterInfo.DuelWins, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.CharacterInfo.DuelLosses, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.CharacterInfo.DuelLosses, new { @class = "form-control", @readonly = "readonly", @style = "text-align:right" })
+                @Html.ValidationMessageFor(model => model.CharacterInfo.DuelLosses, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.WinPercent, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.WinPercent, new { @class = "form-control", @readonly = "readonly", @style = "text-align:right" })
+                @Html.ValidationMessageFor(model => model.WinPercent, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.CharacterInfo.DuelsAvailable, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.CharacterInfo.DuelsAvailable, new { @class = "form-control", @readonly = "readonly", @style = "text-align:right", id = "DuelsAvailable" })
+                @Html.ValidationMessageFor(model => model.CharacterInfo.DuelsAvailable, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <br />
+        <br />
+        <div class="form-group">
+            @Html.LabelFor(model => model.DuelsRequested, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.DuelsRequested, new { @class = "form-control", @style = "text-align:right", onchange = "OnChangeDuelRequest", onkeyup = "OnChangeDuelRequest", id = "DuelRequest" })
+                @Html.ValidationMessageFor(model => model.DuelsRequested, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Duel!!!" class="btn btn-default" id="submitButton" style="display:initial;" />
+            </div>
+        </div>
+    </div>
+    if (Model.CharacterInfo.DuelHistory != null)
+    {
+        foreach (var item in Model.CharacterInfo.DuelHistory)
+        {
+        <table style="width:50%">
+            <tr>
+                <td style="text-align: right;">
+                    @Html.DisplayFor(modelItem => item.ID)  &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+                    @Html.DisplayFor(modelItem => item.Initiator)  &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+                    @Html.DisplayFor(modelItem => item.Result) &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+                    @Html.ActionLink("Details", "DuelHistory", new { id = item.ID })
+                </td>
+            </tr>
+            <tr></tr>
+        </table>
+        }
+    }
+}
+<p>
+    @Html.ActionLink("Status", "Edit", new { id = Model.CharacterInfo.ID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Data.Entity.ModelConfiguration.Conventions;
 using duelfighteronline.Models;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace duelfighteronline.Context
 {
@@ -14,6 +15,7 @@ namespace duelfighteronline.Context
         public CharacterClassContext() : base("CharacterDatabase")
         { }
         public DbSet<CharacterInfo> CharacterInfo { get; set; }
+        public DbSet<DuelHistory> DuelHistory { get; set; }
         
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

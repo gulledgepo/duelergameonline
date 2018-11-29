@@ -7,7 +7,7 @@
 <h2>Characters</h2>
 
 <p>
-    @Html.ActionLink("Create New Character", "Create")
+    @Html.ActionLink("Create New Character", "Create", "CharacterCreate")
 </p>
 <p class="text-danger">
     @TempData["message"]
@@ -22,7 +22,7 @@
             </td>
             <td style="text-align: right;">
                 @Html.ActionLink("Status", "Edit", new { id = item.ID })  &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
-                @Html.ActionLink("Duel", "Details", new { id = item.ID }) &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+                @Html.ActionLink("Duel", "Duel", new { id = item.ID }) &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
                 @Html.ActionLink("Delete(Temp)", "Delete", new { id = item.ID })
             </td>
         </tr>

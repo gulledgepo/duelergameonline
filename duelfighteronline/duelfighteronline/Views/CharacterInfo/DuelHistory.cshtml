@@ -1,0 +1,31 @@
+﻿@model duelfighteronline.Models.DuelHistory
+
+@{
+    ViewBag.Title = "Duel Details";
+}
+
+<div>
+    <h4>Duel Details</h4>
+    <p>
+        @Html.DisplayFor(model => Model.ID)
+    </p>
+    <p>Initiator</p>
+    <p>@Html.DisplayFor(model => Model.Initiator)</p>
+    <p>
+            @Html.DisplayFor(model => Model.Result)
+    </p>
+    <p>
+            @Html.TextAreaFor(model => Model.Details, new { rows = "25", cols = "50", @readonly = "readonly" })
+     </p>
+
+
+    
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    }
+</div>

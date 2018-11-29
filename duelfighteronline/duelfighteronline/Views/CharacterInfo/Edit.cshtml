@@ -1,10 +1,10 @@
 ﻿@model duelfighteronline.Models.CharacterInfoViewModel
 
 @{
-    ViewBag.Title = "Edit";
+    ViewBag.Title = "Status";
 }
 
-<h2>Edit</h2>
+<h2>Status</h2>
 
 
 @using (Html.BeginForm())
@@ -73,102 +73,104 @@
     </script>
     <div class="form-horizontal">
         <h4 style="text-align: justify;">
-            @Html.DisplayFor(model => model.characterInfo.CharacterName) the @Html.DisplayFor(model => model.characterInfo.CharacterClass)
+            @Html.DisplayFor(model => model.CharacterInfo.CharacterName) the @Html.DisplayFor(model => model.CharacterInfo.CharacterClass)
         </h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.characterInfo.ID)
-        @Html.HiddenFor(model => model.characterInfo.PlayerID)
-        @Html.HiddenFor(model => model.characterInfo.CurrentExperience)
-        @Html.HiddenFor(model => model.characterInfo.MaxExperienceForLevel)
+        @Html.HiddenFor(model => model.CharacterInfo.ID)
+        @Html.HiddenFor(model => model.CharacterInfo.PlayerID)
+        @Html.HiddenFor(model => model.CharacterInfo.CurrentExperience)
+        @Html.HiddenFor(model => model.CharacterInfo.MaxExperienceForLevel)
+        @Html.HiddenFor(model => model.CharacterInfo.CharacterName)
+        @Html.HiddenFor(model => model.CharacterInfo.DuelHistory)
 
         <div class="form-group">
-            @Html.LabelFor(model => model.characterInfo.Level, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.CharacterInfo.Level, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.TextBoxFor(model => model.characterInfo.Level, new { @class = "form-control", @readonly = "readonly", @style = "text-align:right" })
-                @Html.ValidationMessageFor(model => model.characterInfo.Level, "", new { @class = "text-danger" })
+                @Html.TextBoxFor(model => model.CharacterInfo.Level, new { @class = "form-control", @readonly = "readonly", @style = "text-align:right" })
+                @Html.ValidationMessageFor(model => model.CharacterInfo.Level, "", new { @class = "text-danger" })
             </div>
         </div>
         <div class="form-group">
-            @Html.LabelFor(model => model.characterInfo.CurrentExperience, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.CharacterInfo.CurrentExperience, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.TextBoxFor(model => model.ExperienceDisplay, new { @class = "form-control", @readonly = "readonly", @style = "text-align:right" })
-                @Html.ValidationMessageFor(model => model.characterInfo.CurrentExperience, "", new { @class = "text-danger" })
+                @Html.ValidationMessageFor(model => model.CharacterInfo.CurrentExperience, "", new { @class = "text-danger" })
             </div>
         </div>
         <br />
         <div class="form-group">
-            @Html.LabelFor(model => model.characterInfo.Health, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.CharacterInfo.Health, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.TextBoxFor(model => model.characterInfo.Health, new { @class = "form-control", @readonly = "readonly", @style = "text-align:right" })
-                @Html.ValidationMessageFor(model => model.characterInfo.Health, "", new { @class = "text-danger" })
+                @Html.TextBoxFor(model => model.CharacterInfo.Health, new { @class = "form-control", @readonly = "readonly", @style = "text-align:right" })
+                @Html.ValidationMessageFor(model => model.CharacterInfo.Health, "", new { @class = "text-danger" })
             </div>
         </div>
         <div class="form-group">
-            @Html.LabelFor(model => model.Damage, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.CharacterInfo.Damage, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.TextBoxFor(model => model.Damage, new { @class = "form-control", @readonly = "readonly", @style = "text-align:right" })
-                @Html.ValidationMessageFor(model => model.Damage, "", new { @class = "text-danger" })
+                @Html.TextBoxFor(model => model.CharacterInfo.Damage, new { @class = "form-control", @readonly = "readonly", @style = "text-align:right" })
+                @Html.ValidationMessageFor(model => model.CharacterInfo.Damage, "", new { @class = "text-danger" })
             </div>
         </div>
         <div class="form-group">
-            @Html.LabelFor(model => model.CritChance, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.CharacterInfo.CritChance, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.TextBoxFor(model => model.CritChance, new { @class = "form-control", @readonly = "readonly", @style = "text-align:right" })
-                @Html.ValidationMessageFor(model => model.CritChance, "", new { @class = "text-danger" })
+                @Html.TextBoxFor(model => model.CharacterInfo.CritChance, new { @class = "form-control", @readonly = "readonly", @style = "text-align:right" })
+                @Html.ValidationMessageFor(model => model.CharacterInfo.CritChance, "", new { @class = "text-danger" })
             </div>
         </div>
         <div class="form-group">
-            @Html.LabelFor(model => model.DodgeChance, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.CharacterInfo.DodgeChance, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.TextBoxFor(model => model.DodgeChance, new { @class = "form-control", @readonly = "readonly", @style = "text-align:right" })
-                @Html.ValidationMessageFor(model => model.DodgeChance, "", new { @class = "text-danger" })
+                @Html.TextBoxFor(model => model.CharacterInfo.DodgeChance, new { @class = "form-control", @readonly = "readonly", @style = "text-align:right" })
+                @Html.ValidationMessageFor(model => model.CharacterInfo.DodgeChance, "", new { @class = "text-danger" })
             </div>
         </div>
         <br />
         <div class="form-group">
-            @Html.LabelFor(model => model.characterInfo.StatPointsAvailable, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.CharacterInfo.StatPointsAvailable, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.TextBoxFor(model => model.characterInfo.StatPointsAvailable, new { @class = "form-control", @readonly = "readonly", @style = "text-align:right", id = "availableStats" })
-                @Html.ValidationMessageFor(model => model.characterInfo.StatPointsAvailable, "", new { @class = "text-danger" })
+                @Html.TextBoxFor(model => model.CharacterInfo.StatPointsAvailable, new { @class = "form-control", @readonly = "readonly", @style = "text-align:right", id = "availableStats" })
+                @Html.ValidationMessageFor(model => model.CharacterInfo.StatPointsAvailable, "", new { @class = "text-danger" })
             </div>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.characterInfo.Strength, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.CharacterInfo.Strength, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.TextBoxFor(model => model.characterInfo.Strength, new { @class = "form-control", @readonly = "readonly", @style = "text-align:right; display: inline;", id = "statStrength" })
-                @Html.ValidationMessageFor(model => model.characterInfo.Strength, "", new { @class = "text-danger" })
+                @Html.TextBoxFor(model => model.CharacterInfo.Strength, new { @class = "form-control", @readonly = "readonly", @style = "text-align:right; display: inline;", id = "statStrength" })
+                @Html.ValidationMessageFor(model => model.CharacterInfo.Strength, "", new { @class = "text-danger" })
                 <input type="button" value="+" class="btn btn-default" onclick="OnPlusStatClick('statStrength')" style="display: none;" id="btnPlusStrength" />
                 <input type="button" value="-" class="btn btn-default" onclick="OnMinusStatClick('statStrength')" style="display: none;" id="btnMinusStrength" />
             </div>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.characterInfo.Dexterity, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.CharacterInfo.Dexterity, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.TextBoxFor(model => model.characterInfo.Dexterity, new { @class = "form-control", @readonly = "readonly", @style = "text-align:right; display: inline;", id = "statDexterity" })
-                @Html.ValidationMessageFor(model => model.characterInfo.Dexterity, "", new { @class = "text-danger" })
+                @Html.TextBoxFor(model => model.CharacterInfo.Dexterity, new { @class = "form-control", @readonly = "readonly", @style = "text-align:right; display: inline;", id = "statDexterity" })
+                @Html.ValidationMessageFor(model => model.CharacterInfo.Dexterity, "", new { @class = "text-danger" })
                 <input type="button" value="+" class="btn btn-default" onclick="OnPlusStatClick('statDexterity')" style="display: none;" id="btnPlusDexterity" />
                 <input type="button" value="-" class="btn btn-default" onclick="OnMinusStatClick('statDexterity')" style="display: none;" id="btnMinusDexterity" />
             </div>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.characterInfo.Vitality, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.CharacterInfo.Vitality, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.TextBoxFor(model => model.characterInfo.Vitality, new { @class = "form-control", @readonly = "readonly", @style = "text-align:right; display: inline;", id = "statVitality" })
-                @Html.ValidationMessageFor(model => model.characterInfo.Vitality, "", new { @class = "text-danger" })
+                @Html.TextBoxFor(model => model.CharacterInfo.Vitality, new { @class = "form-control", @readonly = "readonly", @style = "text-align:right; display: inline;", id = "statVitality" })
+                @Html.ValidationMessageFor(model => model.CharacterInfo.Vitality, "", new { @class = "text-danger" })
                 <input type="button" value="+" class="btn btn-default" onclick="OnPlusStatClick('statVitality')" style="display: none;" id="btnPlusVitality" />
                 <input type="button" value="-" class="btn btn-default" onclick="OnMinusStatClick('statVitality')" style="display: none;" id="btnMinusVitality" />
             </div>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.characterInfo.Luck, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.CharacterInfo.Luck, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.TextBoxFor(model => model.characterInfo.Luck, new { @class = "form-control", @readonly = "readonly", @style = "text-align:right; display: inline;", id = "statLuck" })
-                @Html.ValidationMessageFor(model => model.characterInfo.Luck, "", new { @class = "text-danger" })
+                @Html.TextBoxFor(model => model.CharacterInfo.Luck, new { @class = "form-control", @readonly = "readonly", @style = "text-align:right; display: inline;", id = "statLuck" })
+                @Html.ValidationMessageFor(model => model.CharacterInfo.Luck, "", new { @class = "text-danger" })
                 <input type="button" value="+" class="btn btn-default" onclick="OnPlusStatClick('statLuck')" style="display: none;" id="btnPlusLuck" />
                 <input type="button" value="-" class="btn btn-default" onclick="OnMinusStatClick('statLuck')" style="display: none;" id="btnMinusLuck" />
             </div>
@@ -198,7 +200,7 @@
 }
 
         <div>
-            @Html.ActionLink("Back to List", "Index")
+            @Html.ActionLink("Back to List", "Index", "CharacterInfo")
         </div>
 
         @section Scripts {

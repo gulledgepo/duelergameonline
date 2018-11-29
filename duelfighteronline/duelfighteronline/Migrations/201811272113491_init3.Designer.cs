@@ -7,13 +7,13 @@ namespace duelfighteronline.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class Init : IMigrationMetadata
+    public sealed partial class init3 : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(Init));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(init3));
         
         string IMigrationMetadata.Id
         {
-            get { return "201811100234170_Init"; }
+            get { return "201811272113491_init3"; }
         }
         
         string IMigrationMetadata.Source
