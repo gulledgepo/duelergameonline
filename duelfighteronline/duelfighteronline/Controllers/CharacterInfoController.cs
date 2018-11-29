@@ -64,10 +64,10 @@ namespace duelfighteronline.Controllers
             if (characterInfo.PlayerID == user.Id)
             {
                 DuelViewModel model = new DuelViewModel();
-                model.CharacterInfo = characterInfo;
-                model.WinPercent = model.CalculateWinPercent(model.CharacterInfo);
-                model.CharacterInfo.DuelsAvailable = 50;
-                model.CharacterInfo.DuelHistory = db.DuelHistory.Where(x => x.CharacterInfoID == model.CharacterInfo.ID).ToList();
+                model.DuelInitiator = characterInfo;
+                model.WinPercent = model.CalculateWinPercent(model.DuelInitiator);
+                model.DuelInitiator.DuelsAvailable = 50;
+                model.DuelInitiator.DuelHistory = db.DuelHistory.Where(x => x.CharacterInfoID == model.DuelInitiator.ID).ToList();
                 return View(model);
             }
             else
@@ -80,7 +80,7 @@ namespace duelfighteronline.Controllers
         // POST: CharacterInfo/Delete/5
         [HttpPost, ActionName("Duel")]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ID,CharacterName,CharacterClass,Level,StatPointsAvailable,CurrentExperience,MaxExperienceForLevel,Health,Strength,Dexterity,Vitality,Luck,PlayerID,DuelsAvailable,DuelWins,DuelLosses,Damage,CritChance,Dodge,CharacterInfo,DuelsRequested, DuelHistory")] DuelViewModel duelInfoReturn)
+        public ActionResult Edit([Bind(Include = "ID,CharacterName,CharacterClass,Level,StatPointsAvailable,CurrentExperience,MaxExperienceForLevel,Health,Strength,Dexterity,Vitality,Luck,PlayerID,DuelsAvailable,DuelWins,DuelLosses,Damage,CritChance,Dodge,CharacterInfo,DuelInitiator,DuelsRequested,DuelHistory")] DuelViewModel duelInfoReturn)
         {
             //Get the last entry in table as that IDs go up by 1 and that will always be the highest number for random generation
             CharacterInfo lastPlayer = new CharacterInfo();
@@ -90,7 +90,7 @@ namespace duelfighteronline.Controllers
             duelInfoReturn = CalculateDuelResultCommand.Execute(duelInfoReturn, db);
             
             //Set the character to the viewmodel
-            CharacterInfo characterInfoSet = duelInfoReturn.CharacterInfo;
+            CharacterInfo characterInfoSet = duelInfoReturn.DuelInitiator;
             CharacterInfo duelTargetInfo = duelInfoReturn.DuelTarget;
             //This is only a test
             TempData["message"] = duelInfoReturn.DuelTarget.CharacterName + "Was his namo" + characterInfoSet.CharacterName + "was the fighter Wins are: " + characterInfoSet.DuelWins + "Losses are: " + characterInfoSet.DuelLosses;
@@ -120,7 +120,6 @@ namespace duelfighteronline.Controllers
             {
                 CharacterInfoViewModel model = new CharacterInfoViewModel();
                 model.CharacterInfo = characterInfo;
-                model.CharacterInfo.StatPointsAvailable = 5;
                 model.ExperienceDisplay = characterInfo.CurrentExperience + "/" + characterInfo.MaxExperienceForLevel;
                 return View(model);
             }

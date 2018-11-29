@@ -19,12 +19,12 @@ namespace duelfighteronline.GameLogic
     public class CalculateDuelResultCommand
     {
         public static Random rand = new Random(DateTime.Now.Millisecond);
-        public static CharacterInfo winner;
-        public static CharacterInfo loser;
-        public static string AttackerDuelLog = "";
-        public static string DefenderDuelLog = "";
+        public static int winnerID;
+        //public static CharacterInfo loser;
+        public static string attackerDuelLog = "";
+        public static string defenderDuelLog = "";
 
-        public static DuelViewModel Execute(DuelViewModel characterInfo, CharacterClassContext db)
+        public static DuelViewModel Execute(DuelViewModel duelCharacterInfo, CharacterClassContext db)
         {
             //CharacterInfo duelingPlayer = new CharacterInfo();
             //duelingPlayer = characterInfo.CharacterInfo;
@@ -32,33 +32,66 @@ namespace duelfighteronline.GameLogic
 
             //CharacterInfo playerToDuel = new CharacterInfo();
             //playerToDuel.ID = -1;
-            int totalPlayers = characterInfo.PlayersTotal;
+            int totalPlayers = duelCharacterInfo.PlayersTotal;
             //Duel the amount of times requested
-            for (int i = 0; i < characterInfo.DuelsRequested; i++)
+            for (int i = 0; i < duelCharacterInfo.DuelsRequested; i++)
             {
                 int idToFind = -1;
                 //As long as the player info is null, we want to repeat and select a new one, it would be null because the random number generated belongs to a deleted account
                 while (idToFind <= 0)
                 {
-                    idToFind = CheckIfPlayerExists(totalPlayers, db, characterInfo.CharacterInfo);
+                    idToFind = CheckIfPlayerExists(totalPlayers, db, duelCharacterInfo.DuelInitiator);
                 }
                 //playerToDuel = db.CharacterInfo.Find(idToFind);
-                characterInfo.DuelTarget = db.CharacterInfo.Find(idToFind);
+                duelCharacterInfo.DuelTarget = db.CharacterInfo.Find(idToFind);
 
                 bool initiatingPlayerAttacking = true;
                 //characterInfo is a DuelViewModel which already holds the attacking and defending player, so we pass just that in and break it down in the CarryOutDuel function
-                int attackingPlayerHealth = characterInfo.CharacterInfo.Health;
-                int defendingPlayerHealth = characterInfo.DuelTarget.Health;
-                AttackerDuelLog = "";
-                DefenderDuelLog = "";
+                int attackingPlayerHealth = duelCharacterInfo.DuelInitiator.Health;
+                int defendingPlayerHealth = duelCharacterInfo.DuelTarget.Health;
+                attackerDuelLog = "";
+                defenderDuelLog = "";
+                winnerID = 0;
+                CarryOutDuel(duelCharacterInfo, initiatingPlayerAttacking, attackingPlayerHealth, defendingPlayerHealth, db, i);
+                //Award Duel Initiator EXP
+                int experienceToAward = CalculateDuelInitiatorExperience(duelCharacterInfo);
+                attackerDuelLog += "You gained " + experienceToAward + " experience!\n";
+                duelCharacterInfo.DuelInitiator.CurrentExperience += experienceToAward;
+                //Award Duel Target EXP
+                experienceToAward = CalculateDuelTargetExperience(duelCharacterInfo);
+                defenderDuelLog += "You gained " + experienceToAward + " experience!\n";
+                duelCharacterInfo.DuelTarget.CurrentExperience += experienceToAward;
+                bool levelUp = false;
+                levelUp = CheckIfLevelUp(duelCharacterInfo.DuelInitiator);
+                if (levelUp)
+                {
+                    attackerDuelLog += "You leveled up!\nYou gained 5 stat points.";
+                }
+                levelUp = CheckIfLevelUp(duelCharacterInfo.DuelTarget);
+                if (levelUp)
+                {
+                    defenderDuelLog += "You leveled up!\nYou gained 5 stat points.";
+                }
 
-                CarryOutDuel(characterInfo, initiatingPlayerAttacking, attackingPlayerHealth, defendingPlayerHealth, db, i);
+                //update DuelHistory
+                if (winnerID == duelCharacterInfo.DuelInitiator.ID)
+                {
+                    db.Set<DuelHistory>().Add(new DuelHistory { CharacterInfoID = duelCharacterInfo.DuelInitiator.ID, Initiator = duelCharacterInfo.DuelInitiator.CharacterName, Result = "Won", Details = attackerDuelLog });
+                    db.Set<DuelHistory>().Add(new DuelHistory { CharacterInfoID = duelCharacterInfo.DuelTarget.ID, Initiator = duelCharacterInfo.DuelInitiator.CharacterName, Result = "Lost", Details = defenderDuelLog });
+                    db.SaveChanges();
+                }
+                else
+                {
+                    db.Set<DuelHistory>().Add(new DuelHistory { CharacterInfoID = duelCharacterInfo.DuelInitiator.ID, Initiator = duelCharacterInfo.DuelInitiator.CharacterName, Result = "Lost", Details = attackerDuelLog });
+                    db.Set<DuelHistory>().Add(new DuelHistory { CharacterInfoID = duelCharacterInfo.DuelTarget.ID, Initiator = duelCharacterInfo.DuelInitiator.CharacterName, Result = "Won", Details = defenderDuelLog });
+                    db.SaveChanges();
+                }
 
 
 
 
             }
-            return characterInfo;
+            return duelCharacterInfo;
         }
 
         public static int CheckIfPlayerExists(int totalPlayers, CharacterClassContext db, CharacterInfo duelInitiate)
@@ -82,109 +115,133 @@ namespace duelfighteronline.GameLogic
             }                      
         }
 
-        public static void CarryOutDuel(DuelViewModel characterInfo, bool initiatingPlayerAttacking, int attackingPlayerHealth, int defendingPlayerHealth, CharacterClassContext db, int duelCounter)
+        public static void CarryOutDuel(DuelViewModel duelCharacterInfo, bool initiatingPlayerAttacking, int attackingPlayerHealth, int defendingPlayerHealth, CharacterClassContext db, int duelCounter)
         {
             bool isCrit = false;
             bool isDodge = false;
             int damageDone = 0;
-            int temp = 0;
-            string tempLog = "";
-            //Defining which character is which, this changes based on the bool InitiatingPlayerAttacking
-            CharacterInfo defendingPlayer;
-            CharacterInfo attackingPlayer;
-            if (initiatingPlayerAttacking == true)
-            {
-                defendingPlayer = characterInfo.DuelTarget;
-                attackingPlayer = characterInfo.CharacterInfo;
-            } else
-            {
-                defendingPlayer = characterInfo.CharacterInfo;
-                attackingPlayer = characterInfo.DuelTarget;
-            }
 
-            
-            isCrit = CheckIfAttackIsCrit(attackingPlayer);
-            //if it is a crit we do the damage and update log accordingly, critical attacks cannot be dodged
-            if (isCrit)
+            //If (initiatingPlayerAttacking) then it is the duelCharacterInfo.DuelInitiator
+            if (initiatingPlayerAttacking)
             {
-                damageDone = (int)(attackingPlayer.Damage * 1.8);
-                defendingPlayerHealth = defendingPlayerHealth - damageDone;
-                AttackerDuelLog += "You crit " + defendingPlayer.CharacterName + " for " + damageDone + ".\n";
-                DefenderDuelLog += attackingPlayer.CharacterName + " crit you for " + damageDone + ".\n";
-            } else
-            {
-                //regular attacks can be dodged, so we must check the defender's dodge chance
-                isDodge = CheckIfAttackIsDodged(defendingPlayer);
-
-                if (isDodge)
+                isCrit = CheckIfAttackIsCrit(duelCharacterInfo.DuelInitiator);
+                //if it is a crit we do the damage and update log accordingly, critical attacks cannot be dodged
+                if (isCrit)
                 {
-                    //the Warrior still takes full damage if he dodges, but he retaliates for his full damage as well, everyone else dodges
-                    if (defendingPlayer.CharacterClass.ToString() == "Warrior")
-                    {
-                        //Attacker's hit to defender
-                        damageDone = (attackingPlayer.Damage);
-                        defendingPlayerHealth = defendingPlayerHealth - damageDone;
-                        AttackerDuelLog += "You hit " + defendingPlayer.CharacterName + " for " + damageDone + ".\n";
-                        DefenderDuelLog += attackingPlayer.CharacterName + " hit you for " + damageDone + ".\n";
-                        //Defender's retaliate
-                        damageDone = (defendingPlayer.Damage);
-                        attackingPlayerHealth = attackingPlayerHealth - damageDone;
-                        AttackerDuelLog += defendingPlayer.CharacterName + " counter attacked you for " + damageDone + ".\n";
-                        DefenderDuelLog += "You counter attacked " + attackingPlayer.CharacterName + "for " + damageDone + ".\n";
-                    }
-                    else
-                    {
-                        AttackerDuelLog += defendingPlayer.CharacterName + " dodged your attack.\n";
-                        DefenderDuelLog += "You dodged " + attackingPlayer.CharacterName + "'s attack.\n";
-                    }
+                    damageDone = (int)(duelCharacterInfo.DuelInitiator.Damage * 1.8);
+                    defendingPlayerHealth = defendingPlayerHealth - damageDone;
+                    attackerDuelLog += "You crit " + duelCharacterInfo.DuelTarget.CharacterName + " for " + damageDone + ".\n";
+                    defenderDuelLog += duelCharacterInfo.DuelInitiator.CharacterName + " crit you for " + damageDone + ".\n";
                 }
                 else
                 {
-                    damageDone = (attackingPlayer.Damage);
-                    defendingPlayerHealth = defendingPlayerHealth - damageDone;
-                    AttackerDuelLog += "You hit " + defendingPlayer.CharacterName + " for " + damageDone + ".\n";
-                    DefenderDuelLog += attackingPlayer.CharacterName + " hit you for " + damageDone + ".\n";
+                    //regular attacks can be dodged, so we must check the defender's dodge chance
+                    isDodge = CheckIfAttackIsDodged(duelCharacterInfo.DuelTarget);
+
+                    if (isDodge)
+                    {
+                        //the Warrior still takes full damage if he dodges, but he retaliates for his full damage as well, everyone else dodges
+                        if (duelCharacterInfo.DuelTarget.CharacterClass.ToString() == "Warrior")
+                        {
+                            //Attacker's hit to defender
+                            damageDone = (duelCharacterInfo.DuelInitiator.Damage);
+                            defendingPlayerHealth = defendingPlayerHealth - damageDone;
+                            attackerDuelLog += "You hit " + duelCharacterInfo.DuelTarget.CharacterName + " for " + damageDone + ".\n";
+                            defenderDuelLog += duelCharacterInfo.DuelInitiator.CharacterName + " hit you for " + damageDone + ".\n";
+                            //Defender's retaliate
+                            damageDone = (duelCharacterInfo.DuelTarget.Damage);
+                            attackingPlayerHealth = attackingPlayerHealth - damageDone;
+                            attackerDuelLog += duelCharacterInfo.DuelTarget.CharacterName + " counter attacked you for " + damageDone + ".\n";
+                            defenderDuelLog += "You counter attacked " + duelCharacterInfo.DuelInitiator.CharacterName + "for " + damageDone + ".\n";
+                        }
+                        else
+                        {
+                            attackerDuelLog += duelCharacterInfo.DuelTarget.CharacterName + " dodged your attack.\n";
+                            defenderDuelLog += "You dodged " + duelCharacterInfo.DuelInitiator.CharacterName + "'s attack.\n";
+                        }
+                    }
+                    else
+                    {
+                        damageDone = (duelCharacterInfo.DuelInitiator.Damage);
+                        defendingPlayerHealth = defendingPlayerHealth - damageDone;
+                        attackerDuelLog += "You hit " + duelCharacterInfo.DuelTarget.CharacterName + " for " + damageDone + ".\n";
+                        defenderDuelLog += duelCharacterInfo.DuelInitiator.CharacterName + " hit you for " + damageDone + ".\n";
+                    }
+                }
+
+
+                //If !initiatingPlayerAttacking then the DuelTarget/Defender is attacking
+            } else
+            {
+                isCrit = CheckIfAttackIsCrit(duelCharacterInfo.DuelTarget);
+                //if it is a crit we do the damage and update log accordingly, critical attacks cannot be dodged
+                if (isCrit)
+                {
+                    damageDone = (int)(duelCharacterInfo.DuelTarget.Damage * 1.8);
+                    attackingPlayerHealth = attackingPlayerHealth - damageDone;
+                    defenderDuelLog += "You crit " + duelCharacterInfo.DuelInitiator.CharacterName + " for " + damageDone + ".\n";
+                    attackerDuelLog += duelCharacterInfo.DuelTarget.CharacterName + " crit you for " + damageDone + ".\n";
+                }
+                else
+                {
+                    //regular attacks can be dodged, so we must check the defender's dodge chance
+                    isDodge = CheckIfAttackIsDodged(duelCharacterInfo.DuelInitiator);
+
+                    if (isDodge)
+                    {
+                        //the Warrior still takes full damage if he dodges, but he retaliates for his full damage as well, everyone else dodges
+                        if (duelCharacterInfo.DuelInitiator.CharacterClass.ToString() == "Warrior")
+                        {
+                            //Defenders's hit to attacker
+                            damageDone = (duelCharacterInfo.DuelTarget.Damage);
+                            attackingPlayerHealth = attackingPlayerHealth - damageDone;
+                            defenderDuelLog += "You hit " + duelCharacterInfo.DuelInitiator.CharacterName + " for " + damageDone + ".\n";
+                            attackerDuelLog += duelCharacterInfo.DuelTarget.CharacterName + " hit you for " + damageDone + ".\n";
+                            //Attacker's retaliate
+                            damageDone = (duelCharacterInfo.DuelInitiator.Damage);
+                            defendingPlayerHealth = defendingPlayerHealth - damageDone;
+                            defenderDuelLog += duelCharacterInfo.DuelInitiator.CharacterName + " counter attacked you for " + damageDone + ".\n";
+                            attackerDuelLog += "You counter attacked " + duelCharacterInfo.DuelTarget.CharacterName + "for " + damageDone + ".\n";
+                        }
+                        else
+                        {
+                            defenderDuelLog += duelCharacterInfo.DuelInitiator.CharacterName + " dodged your attack.\n";
+                            attackerDuelLog += "You dodged " + duelCharacterInfo.DuelTarget.CharacterName + "'s attack.\n";
+                        }
+                    }
+                    else
+                    {
+                        damageDone = (duelCharacterInfo.DuelTarget.Damage);
+                        attackingPlayerHealth = attackingPlayerHealth - damageDone;
+                        defenderDuelLog += "You hit " + duelCharacterInfo.DuelInitiator.CharacterName + " for " + damageDone + ".\n";
+                        attackerDuelLog += duelCharacterInfo.DuelTarget.CharacterName + " hit you for " + damageDone + ".\n";
+                    }
                 }
             }
             //As the attacks happen, we check to see if either player has died, if they have, a winner is declared, if not we repeat until there is a winner.
             if (defendingPlayerHealth < 0)
             {
-                defendingPlayer.DuelLosses++;
-                attackingPlayer.DuelWins++;
-                DefenderDuelLog += "You lost the duel.\n";
-                AttackerDuelLog += "You won the duel.\n";
-                CalculateExperienceResults(attackingPlayer, defendingPlayer, characterInfo);
-                
-                //update DuelHistory
-                db.Set<DuelHistory>().Add(new DuelHistory { CharacterInfoID = attackingPlayer.ID, Initiator = characterInfo.CharacterInfo.CharacterName, Result = "Won", Details = AttackerDuelLog });
-                db.Set<DuelHistory>().Add(new DuelHistory { CharacterInfoID = defendingPlayer.ID, Initiator = characterInfo.CharacterInfo.CharacterName, Result = "Lost", Details = DefenderDuelLog });
-                db.SaveChanges();
+                duelCharacterInfo.DuelTarget.DuelLosses++;
+                duelCharacterInfo.DuelInitiator.DuelWins++;
+                defenderDuelLog += "You lost the duel.\n";
+                attackerDuelLog += "You won the duel.\n";
+                winnerID = duelCharacterInfo.DuelInitiator.ID;
+
             } else if (attackingPlayerHealth < 0)
             {
-                defendingPlayer.DuelWins++;
-                attackingPlayer.DuelLosses++;
-                DefenderDuelLog += "You won the duel.\n";
-                AttackerDuelLog += "You lost the duel.\n";
-                CalculateExperienceResults(defendingPlayer, attackingPlayer, characterInfo);
-                //update DuelHistory
-                db.Set<DuelHistory>().Add(new DuelHistory { CharacterInfoID = attackingPlayer.ID, Initiator = characterInfo.CharacterInfo.CharacterName, Result = "Lost", Details = AttackerDuelLog });
-                db.Set<DuelHistory>().Add(new DuelHistory { CharacterInfoID = defendingPlayer.ID, Initiator = characterInfo.CharacterInfo.CharacterName, Result = "Won", Details = DefenderDuelLog });
-                db.SaveChanges();
+                duelCharacterInfo.DuelTarget.DuelWins++;
+                duelCharacterInfo.DuelInitiator.DuelLosses++;
+                defenderDuelLog += "You won the duel.\n";
+                attackerDuelLog += "You lost the duel.\n";
+                winnerID = duelCharacterInfo.DuelTarget.ID;
+                
             } else
             {
                 //Change current attacker to defender for next iteration
                 initiatingPlayerAttacking = !initiatingPlayerAttacking;
-                //Swap HP
-                temp = attackingPlayerHealth;
-                attackingPlayerHealth = defendingPlayerHealth;
-                defendingPlayerHealth = temp;
-                tempLog = AttackerDuelLog;
-                AttackerDuelLog = DefenderDuelLog;
-                DefenderDuelLog = tempLog;
-                CarryOutDuel(characterInfo, initiatingPlayerAttacking, attackingPlayerHealth, defendingPlayerHealth, db, duelCounter);
+                CarryOutDuel(duelCharacterInfo, initiatingPlayerAttacking, attackingPlayerHealth, defendingPlayerHealth, db, duelCounter);
             }
             
-
         }
 
         public static bool CheckIfAttackIsCrit(CharacterInfo attacker)
@@ -217,124 +274,232 @@ namespace duelfighteronline.GameLogic
             return isDodged;
         }
 
-        public static void CalculateExperienceResults(CharacterInfo winner, CharacterInfo loser, DuelViewModel characterInfo)
+        public static int CalculateDuelInitiatorExperience(DuelViewModel duelCharacterInfo)
         {
             int experienceToAward = 0;
-            //If initiating character won
-            if (winner.ID == characterInfo.CharacterInfo.ID)
+            int levelDifference = (duelCharacterInfo.DuelInitiator.Level - duelCharacterInfo.DuelTarget.Level);
+            //ExperienceGainForWinning
+            if (winnerID == duelCharacterInfo.DuelInitiator.ID)
             {
-                experienceToAward = CalculateExperienceForWinningInitiator(winner, loser);
-                AttackerDuelLog += "You gained " + experienceToAward + " experience!for winning as attacker\n";
-                characterInfo.CharacterInfo.CurrentExperience += experienceToAward;
-
-                experienceToAward = CalculateExperienceForLosingDefender(winner, loser);
-                characterInfo.DuelTarget.CurrentExperience += experienceToAward;
-                DefenderDuelLog += "You gained " + experienceToAward + " experience!for losing as defender\n";
+                //If the level difference is within 3, full xp is awarded to an attacking winner
+                if (levelDifference >= -3 || levelDifference <= 3)
+                {
+                    experienceToAward = 25 + (5 * duelCharacterInfo.DuelInitiator.Level);
+                }
+                //If an attacker is greater than 4 levels, there is a penalty
+                else if (levelDifference >= 4)
+                {
+                    experienceToAward = (25 / levelDifference) + 5;
+                }
+                //If the attacker is underleveled, we give them bonus xp to compensate for them being underlevelled and winning
+                else if (levelDifference <= -4)
+                {
+                    experienceToAward = 25 + (Math.Abs(levelDifference) * 5);
+                }
             }
+            //ExperienceGainForLosing
             else
             {
-                experienceToAward = CalculateExperienceForWinningDefender(winner, loser);                
-                AttackerDuelLog += ("You gained " + experienceToAward + " experience!\nfor winning as defender");
-                characterInfo.DuelTarget.CurrentExperience += experienceToAward;
-
-
-                experienceToAward = CalculateExperienceForLosingInitiator(winner, loser);
-                DefenderDuelLog += ("You gained " + experienceToAward + " experience!\nfor losing as attacker");                
-                characterInfo.CharacterInfo.CurrentExperience += experienceToAward;
-
+                //If the level difference is within 3, half XP is awarded to initiator for a defender winning
+                if (levelDifference >= -3 || levelDifference <= 3)
+                {
+                    experienceToAward = (25 + (5 * duelCharacterInfo.DuelInitiator.Level)) / 2;
+                }
+                //If an initiator is greater than 4 levels and lost they get less XP
+                else if (levelDifference >= 4)
+                {
+                    experienceToAward = (25 / levelDifference) + 5;
+                }
+                //If the attacker is underleveled, we give them bonus xp to compensate for them being underlevelled and losing
+                else if (levelDifference <= -4)
+                {
+                    experienceToAward = 25 + (Math.Abs(levelDifference) * 5);
+                }
             }
 
-        }
-
-        public static int CalculateExperienceForWinningInitiator(CharacterInfo winner, CharacterInfo loser)
-        {
-            int experienceToAward = 0;
-            int levelDifference = (winner.Level - loser.Level);
-            //If the level difference is within 3, full xp is awarded to an attacking winner
-            if (levelDifference >= -3 || levelDifference <= 3)
-            {
-                experienceToAward = 25 + (5 * winner.Level);
-            }
-            //If an attacker is greater than 4 levels, there is a penalty
-            else if (levelDifference >= 4)
-            {
-                experienceToAward = (25 / levelDifference) + 5;
-            }
-            //If the attacker is underleveled, we give them bonus xp to compensate for them being underlevelled and winning
-            else if (levelDifference <= -4)
-            {
-                experienceToAward = 25 + (Math.Abs(levelDifference) * 5);
-            }           
             return experienceToAward;
         }
 
-        public static int CalculateExperienceForLosingInitiator(CharacterInfo winner, CharacterInfo loser)
+        public static int CalculateDuelTargetExperience(DuelViewModel duelCharacterInfo)
         {
             int experienceToAward = 0;
-            int levelDifference = (winner.Level - loser.Level);
-            //If the level difference is within 3, half XP is awarded to initiator for a defender winning
-            if (levelDifference >= -3 || levelDifference <= 3)
+            int levelDifference = (duelCharacterInfo.DuelInitiator.Level - duelCharacterInfo.DuelTarget.Level);
+            //ExperienceGainForWinning
+            if (winnerID == duelCharacterInfo.DuelTarget.ID)
             {
-                experienceToAward = (25 + (5 * loser.Level)) / 2;
+                //If the level difference is within 3, a third xp is awarded to defender for losing
+                if (levelDifference >= -3 || levelDifference <= 3)
+                {
+                    experienceToAward = (25 + (5 * duelCharacterInfo.DuelTarget.Level)) / 3;
+                }
+                //If an initiator is greater than 4 levels and won, defender gets extra XP
+                else if (levelDifference >= 4)
+                {
+                    experienceToAward = (25 + (levelDifference * 5)) / 2;
+                }
+                //If the attacker is underleveled, and the defender loses, they receive less because they should have won
+                else if (levelDifference <= -4)
+                {
+
+                    experienceToAward = (25 / Math.Abs(levelDifference)) + 5;
+                }
             }
-            //If an initiator is greater than 4 levels and lost they get less XP
-            else if (levelDifference >= 4)
+            //ExperienceGainForLosing
+            else
             {
-                experienceToAward = (25 / levelDifference) + 5;               
+                //If the level difference is within 3, half xp is awarded to defender for losing
+                if (levelDifference >= -3 || levelDifference <= 3)
+                {
+                    experienceToAward = (25 + (5 * duelCharacterInfo.DuelTarget.Level)) / 2;
+                }
+                //If an initiator is greater than 4 levels and lost, defender gets extra XP
+                else if (levelDifference >= 4)
+                {
+                    experienceToAward = (25 + (levelDifference * 7)) / 2;
+                }
+                //If the attacker is underleveled, and the defender wins, they receive less because they were supposed to win
+                else if (levelDifference <= -4)
+                {
+
+                    experienceToAward = (25 / Math.Abs(levelDifference)) + 5;
+                }
             }
-            //If the attacker is underleveled, we give them bonus xp to compensate for them being underlevelled and losing
-            else if (levelDifference <= -4)
-            {
-                experienceToAward = 25 + (Math.Abs(levelDifference) * 5);
-            }
+
             return experienceToAward;
         }
 
-        public static int CalculateExperienceForLosingDefender(CharacterInfo winner, CharacterInfo loser)
+        public static bool CheckIfLevelUp(CharacterInfo experienceCharacterInfo)
         {
-            int experienceToAward = 0;
-            int levelDifference = (winner.Level - loser.Level);
-            //If the level difference is within 3, half xp is awarded to defender for losing
-            if (levelDifference >= -3 || levelDifference <= 3)
+            if (experienceCharacterInfo.CurrentExperience > experienceCharacterInfo.MaxExperienceForLevel)
             {
-                experienceToAward = (25 + (5 * loser.Level)) / 2;
+                experienceCharacterInfo.Level++;
+                experienceCharacterInfo.StatPointsAvailable += 5;
+                experienceCharacterInfo.CurrentExperience -= experienceCharacterInfo.MaxExperienceForLevel;
+                experienceCharacterInfo.MaxExperienceForLevel = 50 + (50 * experienceCharacterInfo.Level);
+                return true;   
+            } else
+            {
+                return false;
             }
-            //If an initiator is greater than 4 levels and lost, defender gets extra XP
-            else if (levelDifference >= 4)
-            {
-                experienceToAward = (25 + (levelDifference * 7)) / 2;
-            }
-            //If the attacker is underleveled, and the defender wins, they receive less because they were supposed to win
-            else if (levelDifference <= -4)
-            {
+        }
+        //public static void CalculateExperienceResults(int winner, DuelViewModel characterInfo)
+        //{
+        //    int experienceToAward = 0;
+        //    //If initiating character won
+        //    if (winner == characterInfo.DuelInitiator.ID)
+        //    {
+        //        experienceToAward = CalculateExperienceForWinningInitiator(winner, loser);
+        //        AttackerDuelLog += "You gained " + experienceToAward + " experience!for winning as attacker\n";
+        //        characterInfo.DuelInitiator.CurrentExperience += experienceToAward;
+
+        //        experienceToAward = CalculateExperienceForLosingDefender(winner, loser);
+        //        characterInfo.DuelTarget.CurrentExperience += experienceToAward;
+        //        DefenderDuelLog += "You gained " + experienceToAward + " experience!for losing as defender\n";
+        //    }
+        //    else
+        //    {
+        //        experienceToAward = CalculateExperienceForWinningDefender(winner, loser);                
+        //        AttackerDuelLog += ("You gained " + experienceToAward + " experience!\nfor winning as defender");
+        //        characterInfo.DuelTarget.CurrentExperience += experienceToAward;
+
+
+        //        experienceToAward = CalculateExperienceForLosingInitiator(winner, loser);
+        //        DefenderDuelLog += ("You gained " + experienceToAward + " experience!\nfor losing as attacker");                
+        //        characterInfo.DuelInitiator.CurrentExperience += experienceToAward;
+
+        //    }
+
+        //}
+
+        //public static int CalculateExperienceForWinningInitiator(CharacterInfo winner, CharacterInfo loser)
+        //{
+        //    int experienceToAward = 0;
+        //    int levelDifference = (winner.Level - loser.Level);
+        //    //If the level difference is within 3, full xp is awarded to an attacking winner
+        //    if (levelDifference >= -3 || levelDifference <= 3)
+        //    {
+        //        experienceToAward = 25 + (5 * winner.Level);
+        //    }
+        //    //If an attacker is greater than 4 levels, there is a penalty
+        //    else if (levelDifference >= 4)
+        //    {
+        //        experienceToAward = (25 / levelDifference) + 5;
+        //    }
+        //    //If the attacker is underleveled, we give them bonus xp to compensate for them being underlevelled and winning
+        //    else if (levelDifference <= -4)
+        //    {
+        //        experienceToAward = 25 + (Math.Abs(levelDifference) * 5);
+        //    }           
+        //    return experienceToAward;
+        //}
+
+        //public static int CalculateExperienceForLosingInitiator(CharacterInfo winner, CharacterInfo loser)
+        //{
+        //    int experienceToAward = 0;
+        //    int levelDifference = (winner.Level - loser.Level);
+        //    //If the level difference is within 3, half XP is awarded to initiator for a defender winning
+        //    if (levelDifference >= -3 || levelDifference <= 3)
+        //    {
+        //        experienceToAward = (25 + (5 * loser.Level)) / 2;
+        //    }
+        //    //If an initiator is greater than 4 levels and lost they get less XP
+        //    else if (levelDifference >= 4)
+        //    {
+        //        experienceToAward = (25 / levelDifference) + 5;               
+        //    }
+        //    //If the attacker is underleveled, we give them bonus xp to compensate for them being underlevelled and losing
+        //    else if (levelDifference <= -4)
+        //    {
+        //        experienceToAward = 25 + (Math.Abs(levelDifference) * 5);
+        //    }
+        //    return experienceToAward;
+        //}
+
+        //public static int CalculateExperienceForLosingDefender(CharacterInfo winner, CharacterInfo loser)
+        //{
+        //    int experienceToAward = 0;
+        //    int levelDifference = (winner.Level - loser.Level);
+        //    //If the level difference is within 3, half xp is awarded to defender for losing
+        //    if (levelDifference >= -3 || levelDifference <= 3)
+        //    {
+        //        experienceToAward = (25 + (5 * loser.Level)) / 2;
+        //    }
+        //    //If an initiator is greater than 4 levels and lost, defender gets extra XP
+        //    else if (levelDifference >= 4)
+        //    {
+        //        experienceToAward = (25 + (levelDifference * 7)) / 2;
+        //    }
+        //    //If the attacker is underleveled, and the defender wins, they receive less because they were supposed to win
+        //    else if (levelDifference <= -4)
+        //    {
                 
-                experienceToAward = (25 / Math.Abs(levelDifference)) + 5;
-            }
-            return experienceToAward;
-        }
+        //        experienceToAward = (25 / Math.Abs(levelDifference)) + 5;
+        //    }
+        //    return experienceToAward;
+        //}
 
-        public static int CalculateExperienceForWinningDefender(CharacterInfo winner, CharacterInfo loser)
-        {
-            int experienceToAward = 0;
-            int levelDifference = (winner.Level - loser.Level);
-            //If the level difference is within 3, a third xp is awarded to defender for losing
-            if (levelDifference >= -3 || levelDifference <= 3)
-            {
-                experienceToAward = (25 + (5 * loser.Level)) / 3;
-            }
-            //If an initiator is greater than 4 levels and won, defender gets extra XP
-            else if (levelDifference >= 4)
-            {
-                experienceToAward = (25 + (levelDifference * 5)) / 2;
-            }
-            //If the attacker is underleveled, and the defender loses, they receive less because they should have won
-            else if (levelDifference <= -4)
-            {
+        //public static int CalculateExperienceForWinningDefender(CharacterInfo winner, CharacterInfo loser)
+        //{
+        //    int experienceToAward = 0;
+        //    int levelDifference = (winner.Level - loser.Level);
+        //    //If the level difference is within 3, a third xp is awarded to defender for losing
+        //    if (levelDifference >= -3 || levelDifference <= 3)
+        //    {
+        //        experienceToAward = (25 + (5 * loser.Level)) / 3;
+        //    }
+        //    //If an initiator is greater than 4 levels and won, defender gets extra XP
+        //    else if (levelDifference >= 4)
+        //    {
+        //        experienceToAward = (25 + (levelDifference * 5)) / 2;
+        //    }
+        //    //If the attacker is underleveled, and the defender loses, they receive less because they should have won
+        //    else if (levelDifference <= -4)
+        //    {
 
-                experienceToAward = (25 / Math.Abs(levelDifference)) + 5;
-            }
-            return experienceToAward;
-        }
+        //        experienceToAward = (25 / Math.Abs(levelDifference)) + 5;
+        //    }
+        //    return experienceToAward;
+        //}
 
         //public static string GenerateDuelID(CharacterInfo defendingPlayer, CharacterInfo attackingPlayer, int duelCounter)
         //{

@@ -9,7 +9,7 @@ namespace duelfighteronline.Models
     public class DuelViewModel
     {
 
-        public CharacterInfo CharacterInfo { get; set; }
+        public CharacterInfo DuelInitiator { get; set; }
         public CharacterInfo DuelTarget { get; set; }
         [Display(Name = "Win Percent")]
         public float WinPercent { get; set; }

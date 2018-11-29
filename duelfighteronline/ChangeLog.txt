@@ -1,0 +1,20 @@
+11/28/18
+-Added DuelHistory model, foreign key of CharacterInfo.ID. Stores the ID, character ID, result, and detail log of each duel.
+-Added duels.
+-Added duel view and duel history view.
+-Added initial formula for changelog
+-Added initial formula for dodge chance
+-Renamed Dodge to DodgeChance
+-Added setting of crit chance and dodge chance upon character creation
+-Added updating of crit chance and dodge chance upon character creation
+-Reworked CalculateDuelDamage. Now takes into account crit, dodge chance, warrior counter, and shortened code
+-Added experience gain. Experience is gained based on being Attacker winning or losing, and defender winning or losing.
+-Updated DuelHistory model to include who initiated the duel.
+
+11/29/18
+-Renamed DuelViewModel.CharacterInfo to DuelViewModel.DuelInitiator, all instances updated
+-CalculateDuelResultCommand now refers to to the DuelViewModel as duelCharacterInfo
+-Went back to the longer version of carrying out a duel. This gets rid of ambiguity and allows me to address the participants more clearly.
+-Removed the layering of the duelviewmodel through deeper and deeper functions. This was sloppy and a result of not knowing who was attacker/defender.
+-Reworked how experience is calculated. 5 functions down to 2. 
+-Added CheckLevelUp. Characters can now properly level up and gain stat points.

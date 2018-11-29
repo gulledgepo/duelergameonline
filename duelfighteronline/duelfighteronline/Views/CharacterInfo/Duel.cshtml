@@ -28,40 +28,40 @@
 
     <div class="form-horizontal">
         <h4 style="text-align: justify;">
-            @Html.DisplayFor(model => model.CharacterInfo.CharacterName) the @Html.DisplayFor(model => model.CharacterInfo.CharacterClass)
+            @Html.DisplayFor(model => model.DuelInitiator.CharacterName) the @Html.DisplayFor(model => model.DuelInitiator.CharacterClass)
         </h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.CharacterInfo.ID)
-        @Html.HiddenFor(model => model.CharacterInfo.CharacterName)
-        @Html.HiddenFor(model => model.CharacterInfo.Level)
-        @Html.HiddenFor(model => model.CharacterInfo.PlayerID)
-        @Html.HiddenFor(model => model.CharacterInfo.CurrentExperience)
-        @Html.HiddenFor(model => model.CharacterInfo.MaxExperienceForLevel)
-        @Html.HiddenFor(model => model.CharacterInfo.Strength)
-        @Html.HiddenFor(model => model.CharacterInfo.Dexterity)
-        @Html.HiddenFor(model => model.CharacterInfo.Vitality)
-        @Html.HiddenFor(model => model.CharacterInfo.Luck)
-        @Html.HiddenFor(model => model.CharacterInfo.StatPointsAvailable)
-        @Html.HiddenFor(model => model.CharacterInfo.Damage)
-        @Html.HiddenFor(model => model.CharacterInfo.Health)
-        @Html.HiddenFor(model => model.CharacterInfo.CritChance)
-        @Html.HiddenFor(model => model.CharacterInfo.DodgeChance)
-        @Html.HiddenFor(model => model.CharacterInfo.DuelHistory)
+        @Html.HiddenFor(model => model.DuelInitiator.ID)
+        @Html.HiddenFor(model => model.DuelInitiator.CharacterName)
+        @Html.HiddenFor(model => model.DuelInitiator.Level)
+        @Html.HiddenFor(model => model.DuelInitiator.PlayerID)
+        @Html.HiddenFor(model => model.DuelInitiator.CurrentExperience)
+        @Html.HiddenFor(model => model.DuelInitiator.MaxExperienceForLevel)
+        @Html.HiddenFor(model => model.DuelInitiator.Strength)
+        @Html.HiddenFor(model => model.DuelInitiator.Dexterity)
+        @Html.HiddenFor(model => model.DuelInitiator.Vitality)
+        @Html.HiddenFor(model => model.DuelInitiator.Luck)
+        @Html.HiddenFor(model => model.DuelInitiator.StatPointsAvailable)
+        @Html.HiddenFor(model => model.DuelInitiator.Damage)
+        @Html.HiddenFor(model => model.DuelInitiator.Health)
+        @Html.HiddenFor(model => model.DuelInitiator.CritChance)
+        @Html.HiddenFor(model => model.DuelInitiator.DodgeChance)
+        @Html.HiddenFor(model => model.DuelInitiator.DuelHistory)
         <hr />
 
         <div class="form-group">
-            @Html.LabelFor(model => model.CharacterInfo.DuelWins, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.DuelInitiator.DuelWins, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.TextBoxFor(model => model.CharacterInfo.DuelWins, new { @class = "form-control", @readonly = "readonly", @style = "text-align:right" })
-                @Html.ValidationMessageFor(model => model.CharacterInfo.DuelWins, "", new { @class = "text-danger" })
+                @Html.TextBoxFor(model => model.DuelInitiator.DuelWins, new { @class = "form-control", @readonly = "readonly", @style = "text-align:right" })
+                @Html.ValidationMessageFor(model => model.DuelInitiator.DuelWins, "", new { @class = "text-danger" })
             </div>
         </div>
         <div class="form-group">
-            @Html.LabelFor(model => model.CharacterInfo.DuelLosses, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.DuelInitiator.DuelLosses, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.TextBoxFor(model => model.CharacterInfo.DuelLosses, new { @class = "form-control", @readonly = "readonly", @style = "text-align:right" })
-                @Html.ValidationMessageFor(model => model.CharacterInfo.DuelLosses, "", new { @class = "text-danger" })
+                @Html.TextBoxFor(model => model.DuelInitiator.DuelLosses, new { @class = "form-control", @readonly = "readonly", @style = "text-align:right" })
+                @Html.ValidationMessageFor(model => model.DuelInitiator.DuelLosses, "", new { @class = "text-danger" })
             </div>
         </div>
         <div class="form-group">
@@ -72,10 +72,10 @@
             </div>
         </div>
         <div class="form-group">
-            @Html.LabelFor(model => model.CharacterInfo.DuelsAvailable, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.DuelInitiator.DuelsAvailable, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.TextBoxFor(model => model.CharacterInfo.DuelsAvailable, new { @class = "form-control", @readonly = "readonly", @style = "text-align:right", id = "DuelsAvailable" })
-                @Html.ValidationMessageFor(model => model.CharacterInfo.DuelsAvailable, "", new { @class = "text-danger" })
+                @Html.TextBoxFor(model => model.DuelInitiator.DuelsAvailable, new { @class = "form-control", @readonly = "readonly", @style = "text-align:right", id = "DuelsAvailable" })
+                @Html.ValidationMessageFor(model => model.DuelInitiator.DuelsAvailable, "", new { @class = "text-danger" })
             </div>
         </div>
         <br />
@@ -93,9 +93,9 @@
             </div>
         </div>
     </div>
-    if (Model.CharacterInfo.DuelHistory != null)
+    if (Model.DuelInitiator.DuelHistory != null)
     {
-        foreach (var item in Model.CharacterInfo.DuelHistory)
+        foreach (var item in Model.DuelInitiator.DuelHistory)
         {
         <table style="width:50%">
             <tr>
@@ -112,7 +112,7 @@
     }
 }
 <p>
-    @Html.ActionLink("Status", "Edit", new { id = Model.CharacterInfo.ID }) |
+    @Html.ActionLink("Status", "Edit", new { id = Model.DuelInitiator.ID }) |
     @Html.ActionLink("Back to List", "Index")
 </p>
 
