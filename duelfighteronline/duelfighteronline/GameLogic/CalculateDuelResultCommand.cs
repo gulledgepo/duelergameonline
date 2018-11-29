@@ -20,18 +20,11 @@ namespace duelfighteronline.GameLogic
     {
         public static Random rand = new Random(DateTime.Now.Millisecond);
         public static int winnerID;
-        //public static CharacterInfo loser;
         public static string attackerDuelLog = "";
         public static string defenderDuelLog = "";
 
         public static DuelViewModel Execute(DuelViewModel duelCharacterInfo, CharacterClassContext db)
         {
-            //CharacterInfo duelingPlayer = new CharacterInfo();
-            //duelingPlayer = characterInfo.CharacterInfo;
-            
-
-            //CharacterInfo playerToDuel = new CharacterInfo();
-            //playerToDuel.ID = -1;
             int totalPlayers = duelCharacterInfo.PlayersTotal;
             //Duel the amount of times requested
             for (int i = 0; i < duelCharacterInfo.DuelsRequested; i++)
@@ -42,7 +35,7 @@ namespace duelfighteronline.GameLogic
                 {
                     idToFind = CheckIfPlayerExists(totalPlayers, db, duelCharacterInfo.DuelInitiator);
                 }
-                //playerToDuel = db.CharacterInfo.Find(idToFind);
+
                 duelCharacterInfo.DuelTarget = db.CharacterInfo.Find(idToFind);
 
                 bool initiatingPlayerAttacking = true;
@@ -382,135 +375,7 @@ namespace duelfighteronline.GameLogic
                 return false;
             }
         }
-        //public static void CalculateExperienceResults(int winner, DuelViewModel characterInfo)
-        //{
-        //    int experienceToAward = 0;
-        //    //If initiating character won
-        //    if (winner == characterInfo.DuelInitiator.ID)
-        //    {
-        //        experienceToAward = CalculateExperienceForWinningInitiator(winner, loser);
-        //        AttackerDuelLog += "You gained " + experienceToAward + " experience!for winning as attacker\n";
-        //        characterInfo.DuelInitiator.CurrentExperience += experienceToAward;
-
-        //        experienceToAward = CalculateExperienceForLosingDefender(winner, loser);
-        //        characterInfo.DuelTarget.CurrentExperience += experienceToAward;
-        //        DefenderDuelLog += "You gained " + experienceToAward + " experience!for losing as defender\n";
-        //    }
-        //    else
-        //    {
-        //        experienceToAward = CalculateExperienceForWinningDefender(winner, loser);                
-        //        AttackerDuelLog += ("You gained " + experienceToAward + " experience!\nfor winning as defender");
-        //        characterInfo.DuelTarget.CurrentExperience += experienceToAward;
-
-
-        //        experienceToAward = CalculateExperienceForLosingInitiator(winner, loser);
-        //        DefenderDuelLog += ("You gained " + experienceToAward + " experience!\nfor losing as attacker");                
-        //        characterInfo.DuelInitiator.CurrentExperience += experienceToAward;
-
-        //    }
-
-        //}
-
-        //public static int CalculateExperienceForWinningInitiator(CharacterInfo winner, CharacterInfo loser)
-        //{
-        //    int experienceToAward = 0;
-        //    int levelDifference = (winner.Level - loser.Level);
-        //    //If the level difference is within 3, full xp is awarded to an attacking winner
-        //    if (levelDifference >= -3 || levelDifference <= 3)
-        //    {
-        //        experienceToAward = 25 + (5 * winner.Level);
-        //    }
-        //    //If an attacker is greater than 4 levels, there is a penalty
-        //    else if (levelDifference >= 4)
-        //    {
-        //        experienceToAward = (25 / levelDifference) + 5;
-        //    }
-        //    //If the attacker is underleveled, we give them bonus xp to compensate for them being underlevelled and winning
-        //    else if (levelDifference <= -4)
-        //    {
-        //        experienceToAward = 25 + (Math.Abs(levelDifference) * 5);
-        //    }           
-        //    return experienceToAward;
-        //}
-
-        //public static int CalculateExperienceForLosingInitiator(CharacterInfo winner, CharacterInfo loser)
-        //{
-        //    int experienceToAward = 0;
-        //    int levelDifference = (winner.Level - loser.Level);
-        //    //If the level difference is within 3, half XP is awarded to initiator for a defender winning
-        //    if (levelDifference >= -3 || levelDifference <= 3)
-        //    {
-        //        experienceToAward = (25 + (5 * loser.Level)) / 2;
-        //    }
-        //    //If an initiator is greater than 4 levels and lost they get less XP
-        //    else if (levelDifference >= 4)
-        //    {
-        //        experienceToAward = (25 / levelDifference) + 5;               
-        //    }
-        //    //If the attacker is underleveled, we give them bonus xp to compensate for them being underlevelled and losing
-        //    else if (levelDifference <= -4)
-        //    {
-        //        experienceToAward = 25 + (Math.Abs(levelDifference) * 5);
-        //    }
-        //    return experienceToAward;
-        //}
-
-        //public static int CalculateExperienceForLosingDefender(CharacterInfo winner, CharacterInfo loser)
-        //{
-        //    int experienceToAward = 0;
-        //    int levelDifference = (winner.Level - loser.Level);
-        //    //If the level difference is within 3, half xp is awarded to defender for losing
-        //    if (levelDifference >= -3 || levelDifference <= 3)
-        //    {
-        //        experienceToAward = (25 + (5 * loser.Level)) / 2;
-        //    }
-        //    //If an initiator is greater than 4 levels and lost, defender gets extra XP
-        //    else if (levelDifference >= 4)
-        //    {
-        //        experienceToAward = (25 + (levelDifference * 7)) / 2;
-        //    }
-        //    //If the attacker is underleveled, and the defender wins, they receive less because they were supposed to win
-        //    else if (levelDifference <= -4)
-        //    {
-                
-        //        experienceToAward = (25 / Math.Abs(levelDifference)) + 5;
-        //    }
-        //    return experienceToAward;
-        //}
-
-        //public static int CalculateExperienceForWinningDefender(CharacterInfo winner, CharacterInfo loser)
-        //{
-        //    int experienceToAward = 0;
-        //    int levelDifference = (winner.Level - loser.Level);
-        //    //If the level difference is within 3, a third xp is awarded to defender for losing
-        //    if (levelDifference >= -3 || levelDifference <= 3)
-        //    {
-        //        experienceToAward = (25 + (5 * loser.Level)) / 3;
-        //    }
-        //    //If an initiator is greater than 4 levels and won, defender gets extra XP
-        //    else if (levelDifference >= 4)
-        //    {
-        //        experienceToAward = (25 + (levelDifference * 5)) / 2;
-        //    }
-        //    //If the attacker is underleveled, and the defender loses, they receive less because they should have won
-        //    else if (levelDifference <= -4)
-        //    {
-
-        //        experienceToAward = (25 / Math.Abs(levelDifference)) + 5;
-        //    }
-        //    return experienceToAward;
-        //}
-
-        //public static string GenerateDuelID(CharacterInfo defendingPlayer, CharacterInfo attackingPlayer, int duelCounter)
-        //{
-        //    string duelID = "";
-        //    duelID += attackingPlayer.CharacterName.First();
-        //    duelID += duelCounter;
-        //    duelID += attackingPlayer.ID;            
-        //    duelID += defendingPlayer.CharacterName.First();
-        //    duelID += DateTime.Now.Millisecond;
-        //    return duelID;
-        //}
+        
 
     }
 
