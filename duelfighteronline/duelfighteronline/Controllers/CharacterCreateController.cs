@@ -10,7 +10,7 @@ using duelfighteronline.Context;
 using duelfighteronline.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
-
+using duelfighteronline.GameLogic;
 namespace duelfighteronline.Controllers
 {
     public class CharacterCreateController : Controller
@@ -33,15 +33,7 @@ namespace duelfighteronline.Controllers
             var user = UserManager.FindById(User.Identity.GetUserId());
             //Pass in the initial stats for each character for creation.
             CharacterInfo characterInfo = new CharacterInfo();
-            characterInfo.Level = 1;
-            characterInfo.CurrentExperience = 0;
-            characterInfo.MaxExperienceForLevel = 50;
-            characterInfo.StatPointsAvailable = 30;
-            characterInfo.Health = 50;
-            characterInfo.Strength = 1;
-            characterInfo.Vitality = 1;
-            characterInfo.Dexterity = 1;
-            characterInfo.Luck = 1;
+            characterInfo = SetCharacterStats.SetInitialCharacterStats(characterInfo);
             //This passes the userID into the character creation where it will be stored to associate that character with that user.
             characterInfo.PlayerID = user.Id;
             return View(characterInfo);

@@ -14,6 +14,7 @@ namespace duelfighteronline.Models
 
         public int CharacterInfoID { get; set; }
         public string Initiator { get; set; }
+        public string Target { get; set; }
         public string Result { get; set; }
         public string Details { get; set; }
     }

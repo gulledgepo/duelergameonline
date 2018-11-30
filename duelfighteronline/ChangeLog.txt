@@ -18,3 +18,8 @@
 -Removed the layering of the duelviewmodel through deeper and deeper functions. This was sloppy and a result of not knowing who was attacker/defender.
 -Reworked how experience is calculated. 5 functions down to 2. 
 -Added CheckLevelUp. Characters can now properly level up and gain stat points.
+
+11/30/18
+-Reworked Crit Chance and Dodge Chance check into one function, code shortened substantially.
+-Added SetCharacterStats.cs to GameLogic. This is used to set the initial stats for creating a new character.
+-Changed setting stats in CharacterCreateController to use SetCharacterStats.SetInitialCharacterStats rather than setting them in the controller.

@@ -204,7 +204,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="GameLogic\CalculateDuelResultCommand.cs" />
-    <Compile Include="GameLogic\RandomGen2.cs" />
+    <Compile Include="GameLogic\SetCharacterStats.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -215,6 +215,14 @@
     <Compile Include="Migrations\201811272113491_init3.cs" />
     <Compile Include="Migrations\201811272113491_init3.Designer.cs">
       <DependentUpon>201811272113491_init3.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201811292155354_init4.cs" />
+    <Compile Include="Migrations\201811292155354_init4.Designer.cs">
+      <DependentUpon>201811292155354_init4.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201811292157255_init5.cs" />
+    <Compile Include="Migrations\201811292157255_init5.Designer.cs">
+      <DependentUpon>201811292157255_init5.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -316,6 +324,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201811272113491_init3.resx">
       <DependentUpon>201811272113491_init3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811292155354_init4.resx">
+      <DependentUpon>201811292155354_init4.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811292157255_init5.resx">
+      <DependentUpon>201811292157255_init5.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -11,17 +11,20 @@
     </p>
     <p>Initiator</p>
     <p>@Html.DisplayFor(model => Model.Initiator)</p>
+    <p>vs</p>
+    <p>@Html.DisplayFor(model => Model.Target)</p>
     <p>
-            @Html.DisplayFor(model => Model.Result)
+        @Html.DisplayFor(model => Model.Result)
     </p>
     <p>
-            @Html.TextAreaFor(model => Model.Details, new { rows = "25", cols = "50", @readonly = "readonly" })
-     </p>
+        @Html.TextAreaFor(model => Model.Details, new { rows = "25", cols = "50", @readonly = "readonly" })
+    </p>
 
 
-    
 
-    @using (Html.BeginForm()) {
+
+    @using (Html.BeginForm())
+    {
         @Html.AntiForgeryToken()
 
         <div class="form-actions no-color">
