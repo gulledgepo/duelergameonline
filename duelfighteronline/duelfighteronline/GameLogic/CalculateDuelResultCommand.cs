@@ -35,6 +35,10 @@ namespace duelfighteronline.GameLogic
                 {
                     idToFind = CheckIfPlayerExists(totalPlayers, db, duelCharacterInfo.DuelInitiator);
                 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/master
                 duelCharacterInfo.DuelTarget = db.CharacterInfo.Find(idToFind);
 
                 bool initiatingPlayerAttacking = true;
